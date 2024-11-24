@@ -8,7 +8,6 @@ include("connect.php"); // Include database connection
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <title>Homepage</title>
 </head>
@@ -28,7 +27,7 @@ include("connect.php"); // Include database connection
 
         <!-- Display Filters Table -->
         <h2>Filters Table</h2>
-        <table border="1" cellpadding="10" cellspacing="0">
+        <table>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -49,12 +48,20 @@ include("connect.php"); // Include database connection
                 if ($result && $result->num_rows > 0) {
                     // Output data of each row
                     while ($row = $result->fetch_assoc()) {
+                        // Determine the stock status
+                        $quantityClass = 'quantity-high'; // Default to high
+                        if ($row['Quantity'] <= $row['LowStockSignal']) {
+                            $quantityClass = 'quantity-low';
+                        } elseif ($row['Quantity'] < $row['MaxStock'] / 2) {
+                            $quantityClass = 'quantity-medium';
+                        }
+
                         echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['ID'] ?? 'N/A') . "</td>"; // Updated column names
+                        echo "<td>" . htmlspecialchars($row['ID'] ?? 'N/A') . "</td>";
                         echo "<td>" . htmlspecialchars($row['FilterCode'] ?? 'N/A') . "</td>";
                         echo "<td>" . htmlspecialchars($row['FilterName'] ?? 'N/A') . "</td>";
                         echo "<td>" . htmlspecialchars($row['Materials'] ?? 'N/A') . "</td>";
-                        echo "<td>" . htmlspecialchars($row['Quantity'] ?? 'N/A') . "</td>";
+                        echo "<td class='$quantityClass'>" . htmlspecialchars($row['Quantity'] ?? 'N/A') . "</td>";
                         echo "<td>" . htmlspecialchars($row['MaxStock'] ?? 'N/A') . "</td>";
                         echo "<td>" . htmlspecialchars($row['LowStockSignal'] ?? 'N/A') . "</td>";
                         echo "</tr>";
