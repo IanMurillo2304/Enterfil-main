@@ -16,18 +16,18 @@ include("connect.php"); // Include database connection
     <div class="container" id="dashboard">
         <h1 class="form-title">Raw Materials Module Main Dashboard</h1>
 
-        <!-- Add Item Button -->
+        <!-- Add Filter Button -->
         <form method="post" action="addInterface.php">
-            <input type="submit" class="btn" value="Add Item" name="addItemButton">
+            <input type="submit" class="btn" value="Add Filter" name="addFilterButton">
         </form>
 
-        <!-- Remove Item Button -->
+        <!-- Remove Filter Button -->
         <form method="post" action="removeItem.php">
-            <input type="submit" class="btn" value="Remove Item" name="removeItemButton">
+            <input type="submit" class="btn" value="Remove Filter" name="removeFilterButton">
         </form>
 
-        <!-- Display Items Table -->
-        <h2>Items Table</h2>
+        <!-- Display Filters Table -->
+        <h2>Filters Table</h2>
         <table border="1" cellpadding="10" cellspacing="0">
             <thead>
                 <tr>
@@ -37,30 +37,30 @@ include("connect.php"); // Include database connection
                     <th>Materials</th>
                     <th>Quantity</th>
                     <th>Max Stock</th>
-                    <th>Low Stock</th>
+                    <th>Low Stock Signal</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                // Fetch data from items table
-                $sql = "SELECT * FROM items";
+                // Fetch data from filters table
+                $sql = "SELECT * FROM filters"; // Updated table name
                 $result = $conn->query($sql);
 
-                if ($result->num_rows > 0) {
+                if ($result && $result->num_rows > 0) {
                     // Output data of each row
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>";
-                        echo "<td>" . $row['id'] . "</td>";
-                        echo "<td>" . $row['filter_code'] . "</td>";
-                        echo "<td>" . $row['filter_name'] . "</td>";
-                        echo "<td>" . $row['materials'] . "</td>";
-                        echo "<td>" . $row['quantity'] . "</td>";
-                        echo "<td>" . $row['max_stock'] . "</td>";
-                        echo "<td>" . $row['low_stock'] . "</td>";
+                        echo "<td>" . htmlspecialchars($row['ID'] ?? 'N/A') . "</td>"; // Updated column names
+                        echo "<td>" . htmlspecialchars($row['FilterCode'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['FilterName'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['Materials'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['Quantity'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['MaxStock'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['LowStockSignal'] ?? 'N/A') . "</td>";
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='7'>No items found</td></tr>";
+                    echo "<tr><td colspan='7'>No filters found</td></tr>";
                 }
                 ?>
             </tbody>

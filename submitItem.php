@@ -15,8 +15,8 @@ if (isset($_POST['submitButton'])) {
     $LowStockSignal = $_POST['lowStock'];
 
     try {
-        // Check if filter_code already exists in the 'items' table
-        $checkCode = "SELECT * FROM items WHERE filter_code = ?";
+        // Check if FilterCode already exists in the 'filters' table
+        $checkCode = "SELECT * FROM filters WHERE FilterCode = ?";
         $stmt = $conn->prepare($checkCode);
         $stmt->bind_param("s", $FilterCode);
         $stmt->execute();
@@ -25,8 +25,8 @@ if (isset($_POST['submitButton'])) {
         if ($result->num_rows > 0) {
             echo "Filter Code Already Exists!";
         } else {
-            // Insert the new filter into the 'items' table
-            $insertQuery = "INSERT INTO items (filter_code, filter_name, materials, quantity, max_stock, low_stock) 
+            // Insert the new filter into the 'filters' table
+            $insertQuery = "INSERT INTO filters (FilterCode, FilterName, Materials, Quantity, MaxStock, LowStockSignal) 
                             VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($insertQuery);
             $stmt->bind_param("sssiii", $FilterCode, $FilterName, $Materials, $Quantity, $MaxStock, $LowStockSignal);
