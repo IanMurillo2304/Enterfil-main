@@ -25,9 +25,9 @@ include("connect.php"); // Include database connection
             <input type="submit" class="btn" value="Remove Filter" name="removeFilterButton">
         </form>
 
-        <!-- Display Items Table -->
-        <h2>Items Table</h2>
-        <table border="1" cellpadding="10" cellspacing="0">
+        <!-- Display Filters Table -->
+        <h2>Filters Table</h2>
+        <table>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -57,13 +57,13 @@ include("connect.php"); // Include database connection
                         }
 
                         echo "<tr>";
-                        echo "<td>" . $row['id'] . "</td>";
-                        echo "<td>" . $row['filter_code'] . "</td>";
-                        echo "<td>" . $row['filter_name'] . "</td>";
-                        echo "<td>" . $row['materials'] . "</td>";
-                        echo "<td>" . $row['quantity'] . "</td>";
-                        echo "<td>" . $row['max_stock'] . "</td>";
-                        echo "<td>" . $row['low_stock'] . "</td>";
+                        echo "<td>" . htmlspecialchars($row['ID'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['FilterCode'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['FilterName'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['Materials'] ?? 'N/A') . "</td>";
+                        echo "<td class='$quantityClass'>" . htmlspecialchars($row['Quantity'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['MaxStock'] ?? 'N/A') . "</td>";
+                        echo "<td>" . htmlspecialchars($row['LowStockSignal'] ?? 'N/A') . "</td>";
                         echo "</tr>";
                     }
                 } else {
