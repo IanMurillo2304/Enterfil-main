@@ -1,36 +1,39 @@
 <?php
 session_start();
-include("connect.php"); // Include database connection
+include("connect.php");
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
     <title>Homepage</title>
 </head>
 <body>
-    <div class="container" id="dashboard">
+    <div class="container" id=dashboard>
         <h1 class="form-title">Raw Materials Module Main Dashboard</h1>
-
-        <!-- Add Filter Button -->
-        <form method="post" action="addInterface.php">
-            <input type="submit" class="btn" value="Add Filter" name="addFilterButton">
+        <form method ="post" action="addInterface.php">
+            <input type="submit" class="btn" value="Add Item" name="addItemButton">
         </form>
-
-        <!-- Remove Filter Button -->
+        <form method ="post" action="changeQuantity.php">
+            <input type="submit" class="btn" value="Add/Subtract Quantity" name="editQuantityButton">
+        </form>
         <form method="post" action="removeItem.php">
-            <input type="submit" class="btn" value="Remove Filter" name="removeFilterButton">
+            <input type="submit" class="btn" value="Remove Item" name="removeFilterButton">
+        </form>
+        <form method ="post" action="searchFilterInterface.php">
+            <input type="submit" class="btn" value="Edit Item" name="editFitlterButton">
         </form>
 
-        <!-- Display Filters Table -->
-        <h2>Filters Table</h2>
+         <!-- Display Filters Table -->
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Filter Code</th>
                     <th>Filter Name</th>
                     <th>Materials</th>
@@ -57,7 +60,6 @@ include("connect.php"); // Include database connection
                         }
 
                         echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['ID'] ?? 'N/A') . "</td>";
                         echo "<td>" . htmlspecialchars($row['FilterCode'] ?? 'N/A') . "</td>";
                         echo "<td>" . htmlspecialchars($row['FilterName'] ?? 'N/A') . "</td>";
                         echo "<td>" . htmlspecialchars($row['Materials'] ?? 'N/A') . "</td>";
