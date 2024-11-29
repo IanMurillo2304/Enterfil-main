@@ -264,3 +264,38 @@ button:hover {
     background: #07001f;
     color: #fff;
 }
+
+/* Error message popup */
+.error-message {
+    margin: 20px 0;
+    padding: 15px;
+    background: #ff4c4c;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.error-message p {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.error-message .btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+    background: rgb(125, 125, 235);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.error-message .btn:hover {
+    background: #07001f;
+}
+
+
+
+
+
