@@ -29,22 +29,28 @@ if(isset($_POST['signUp'])){
 }
 
 if(isset($_POST['signIn'])){
-   $email=$_POST['email'];
-   $password=$_POST['password'];
-   $password=md5($password) ;
-   
-   $sql="SELECT * FROM users WHERE email='$email' and password='$password'";
-   $result=$conn->query($sql);
-   if($result->num_rows>0){
-    session_start();
-    $row=$result->fetch_assoc();
-    $_SESSION['email']=$row['email'];
-    header("Location: homepage.php");
-    exit();
-   }
-   else{
-    echo "Not Found, Incorrect Email or Password";
-   }
+    $email=$_POST['email'];
+    $password=$_POST['password'];
+    $password=md5($password);
 
+    $sql="SELECT * FROM users WHERE email='$email' and password='$password'";
+    $result=$conn->query($sql);
+    if($result->num_rows>0){
+        session_start();
+        $row=$result->fetch_assoc();
+        $_SESSION['email']=$row['email'];
+        header("Location: homepage.php");
+        exit();
+    }
+    else{
+        // Error message for incorrect email or password
+        echo '<div style="color: red; font-weight: bold; text-align: center; padding: 20px;">Incorrect Email or Password</div>';
+        echo '<div style="text-align: center;">
+                <form method="post" action="index.php">
+                    <button type="submit" style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; cursor: pointer;">Return to Page</button>
+                </form>
+              </div>';
+    }
 }
+
 ?>
