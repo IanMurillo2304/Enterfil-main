@@ -2,17 +2,28 @@
 session_start();
 include("connect.php"); // Include database connection
 
+$message = ""; // Initialize the message variable
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['FilterCode'])) {
     // Sanitize user input
     $FilterCode = $conn->real_escape_string($_POST['FilterCode']); // Use 'FilterCode' as per your column name
 
-    // SQL query to delete filter
-    $sql = "DELETE FROM filters WHERE FilterCode = '$FilterCode'";
+    // Check if the filter exists in the database
+    $check_sql = "SELECT * FROM filters WHERE FilterCode = '$FilterCode'";
+    $check_result = $conn->query($check_sql);
 
-    if ($conn->query($sql) === TRUE) {
-        header("Location: homepage.php"); // Redirect to dashboard
+    if ($check_result->num_rows > 0) {
+        // If filter exists, delete it
+        $sql = "DELETE FROM filters WHERE FilterCode = '$FilterCode'";
+        if ($conn->query($sql) === TRUE) {
+            header("Location: homepage.php"); // Redirect to homepage
+            exit; // Ensure no further code is executed
+        } else {
+            $message = "Error deleting filter: " . $conn->error;
+        }
     } else {
-        $message = "Error deleting filter: " . $conn->error;
+        // If filter does not exist, show error message
+        $message = "Filter not found";
     }
 }
 ?>
@@ -31,18 +42,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['FilterCode'])) {
         <h1 class="form-title">Remove Filter</h1>
         
         <!-- Display success/error message -->
-        <?php if (isset($message)) { echo "<p>$message</p>"; } ?>
+        <?php if (!empty($message)) { ?>
+            <p class="error-message"><?php echo $message; ?></p>
+        <?php } ?>
         
-        <form method="post" action="">
-            <input type="text" name="FilterCode" id="FilterCode" placeholder="Filter Code" required>
-            <label for="fCode">Filter Code</label>
-            <input type="submit" class="btn" value="Delete Filter">
-        </form>
+        <!-- Only show the form if there's no error -->
+        <?php if ($message !== "Filter not found") { ?>
+            <form method="post" action="">
+                <input type="text" name="FilterCode" id="FilterCode" placeholder="Filter Code" required>
+                <label for="FilterCode">Filter Code</label>
+                <input type="submit" class="btn" value="Delete Filter">
+            </form>
+        <?php } ?>
 
-        <!-- Go back to dashboard -->
-        <form method="post" action="homepage.php">
-            <input type="submit" class="btn" value="Back to Dashboard">
-        </form>
+        <!-- Return to homepage button -->
+        <?php if ($message === "Filter not found") { ?>
+            <form method="get" action="homepage.php">
+                <button type="submit" class="btn">Return to Homepage</button>
+            </form>
+        <?php } ?>
     </div>
 </body>
 </html>
