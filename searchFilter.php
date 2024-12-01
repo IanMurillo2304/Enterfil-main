@@ -1,6 +1,8 @@
 <?php 
 include 'connect.php';
 
+$message = ""; // Initialize message variable for error handling
+
 if(isset($_POST['searchButton'])){
     $FilterCode = $_POST['fCode'];
 
@@ -10,9 +12,7 @@ if(isset($_POST['searchButton'])){
         $row = $result->fetch_assoc();
     }
     else{
-        echo "Filter does not exist!";
-        header("refresh:3;url=homepage.php");
-        exit;
+        $message = "Filter not found"; // Set error message
     }
 }
 
@@ -30,8 +30,20 @@ if(isset($_POST['searchButton'])){
 <body>
 
 <?php 
-// Only show the form if filter code exists
-if(isset($row) && !empty($row)) { 
+// Show error message if filter not found
+if (!empty($message)) { 
+?>
+    <div class="container" id="errorInterface" style="display:block;">
+        <h1 class="form-title">Error</h1>
+        <p class="error-message"><?php echo $message; ?></p>
+        <form method="post" action="homepage.php">
+            <button type="submit" class="btn">Return to Homepage</button>
+        </form>
+    </div>
+<?php 
+} else {
+    // Only show the form if filter code exists
+    if(isset($row) && !empty($row)) { 
 ?>
     <div class="container" id="editInterface" style="display:block;">
         <h1 class="form-title">Edit Filter</h1>
@@ -71,10 +83,11 @@ if(isset($row) && !empty($row)) {
           </div>
          <input type="submit" class="btn" value="Update Filter" name="updateButton">
         </form>
-      </div>
-
-      <?php 
-} 
+    </div>
+<?php 
+    } 
+}
 ?>
+
 </body>
 </html>

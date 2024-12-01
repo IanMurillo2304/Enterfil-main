@@ -142,15 +142,27 @@ button:hover{
     color:blue;
 }
 
-/* Error Message */
 .error-message {
-    color: red;
-    font-size: 1rem;
-    text-align: center;
-    margin: 1rem 0;
-    padding: 0.5rem;
-    background-color: rgba(255, 0, 0, 0.1); /* Light red background for emphasis */
-    border: 1px solid red; /* Border to highlight the message */
+    color: #f44336; /* Red text color */
+    background-color: #f8d7da; /* Light red background */
+    border: 1px solid #f44336; /* Red border */
+    padding: 10px;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    font-size: 16px;
+    margin-bottom: 15px;
+    text-align: center;
 }
+
+.error-message button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.error-message button:hover {
+    background-color: #0056b3;
+}
+
