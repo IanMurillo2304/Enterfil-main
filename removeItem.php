@@ -2,29 +2,17 @@
 session_start();
 include("connect.php"); // Include database connection
 
-$message = ""; // Initialize $message to avoid undefined variable error
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['FilterCode'])) {
     // Sanitize user input
     $FilterCode = $conn->real_escape_string($_POST['FilterCode']); // Use 'FilterCode' as per your column name
 
-    // Check if the filter exists in the database
-    $checkQuery = "SELECT * FROM filters WHERE FilterCode = '$FilterCode'";
-    $result = $conn->query($checkQuery);
+    // SQL query to delete filter
+    $sql = "DELETE FROM filters WHERE FilterCode = '$FilterCode'";
 
-    if ($result->num_rows > 0) {
-        // If the filter exists, attempt to delete it
-        $sql = "DELETE FROM filters WHERE FilterCode = '$FilterCode'";
-        if ($conn->query($sql) === TRUE) {
-            header("Location: homepage.php"); // Redirect to dashboard on success
-            exit();
-        } else {
-            // Error during deletion
-            $message = "Error deleting filter: " . $conn->error;
-        }
+    if ($conn->query($sql) === TRUE) {
+        header("Location: homepage.php"); // Redirect to dashboard
     } else {
-        // If no matching filter found, set error message
-        $message = "Filter Code not found in the database. Please try again.";
+        $message = "Error deleting filter: " . $conn->error;
     }
 }
 ?>
@@ -43,16 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['FilterCode'])) {
         <h1 class="form-title">Remove Filter</h1>
         
         <!-- Display success/error message -->
-        <?php if (!empty($message)) { ?>
-            <div class="error-message">
-                <p><?php echo $message; ?></p>
-                <button onclick="window.location.href='removeitem.php'" class="btn">Go Back to Remove Filter</button>
-            </div>
-        <?php } ?>
-
+        <?php if (isset($message)) { echo "<p>$message</p>"; } ?>
+        
         <form method="post" action="">
             <input type="text" name="FilterCode" id="FilterCode" placeholder="Filter Code" required>
-            <label for="FilterCode">Filter Code</label>
+            <label for="fCode">Filter Code</label>
             <input type="submit" class="btn" value="Delete Filter">
         </form>
 
