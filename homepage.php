@@ -12,7 +12,10 @@ include("connect.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="search.css">
     <title>Homepage</title>
+
+    
 </head>
 <body>
     <div class="container" id=dashboard>
@@ -29,11 +32,10 @@ include("connect.php");
         <form method ="post" action="searchFilterInterface.php">
             <input type="submit" class="btn" value="Edit Item" name="editFitlterButton">
         </form>
-        <form method="post">
-    <input type="text" class="form-control" id="live_search" autocomplete="off" placeholder="Search Filter Code or Name...">
-</form>
-<div id="searchresult"></div>
-
+        <form method ="post">
+            <input type="text" class="form-control" id="live_search" autocomplete="off"
+                placeholder="Search ... ">
+        </form>
 
         <div id="searchresult"></div>
          <!-- Display Filters Table -->
