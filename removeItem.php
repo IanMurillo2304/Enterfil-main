@@ -3,27 +3,37 @@ session_start();
 include("connect.php"); // Include database connection
 
 $message = ""; // Initialize the message variable
+$FilterCode = ""; // Initialize FilterCode variable
+$confirmation = false; // To track whether the confirmation step should be shown
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['FilterCode'])) {
-    // Sanitize user input
-    $FilterCode = $conn->real_escape_string($_POST['FilterCode']); // Use 'FilterCode' as per your column name
+// Handle the form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['FilterCode'])) {
+        // Sanitize user input
+        $FilterCode = $conn->real_escape_string($_POST['FilterCode']); // Use 'FilterCode' as per your column name
 
-    // Check if the filter exists in the database
-    $check_sql = "SELECT * FROM filters WHERE FilterCode = '$FilterCode'";
-    $check_result = $conn->query($check_sql);
+        // Check if the filter exists in the database
+        $check_sql = "SELECT * FROM filters WHERE FilterCode = '$FilterCode'";
+        $check_result = $conn->query($check_sql);
 
-    if ($check_result->num_rows > 0) {
-        // If filter exists, delete it
-        $sql = "DELETE FROM filters WHERE FilterCode = '$FilterCode'";
-        if ($conn->query($sql) === TRUE) {
-            header("Location: homepage.php"); // Redirect to homepage
-            exit; // Ensure no further code is executed
+        if ($check_result->num_rows > 0) {
+            // If filter exists, proceed to confirmation
+            if (isset($_POST['confirmDelete']) && $_POST['confirmDelete'] == 'yes') {
+                // Perform the delete action after confirmation
+                $sql = "DELETE FROM filters WHERE FilterCode = '$FilterCode'";
+                if ($conn->query($sql) === TRUE) {
+                    $message = "Data removed successfully";
+                } else {
+                    $message = "Error deleting filter: " . $conn->error;
+                }
+            } else {
+                // Show confirmation message if not already confirmed
+                $confirmation = true;
+            }
         } else {
-            $message = "Error deleting filter: " . $conn->error;
+            // If filter does not exist, show error message
+            $message = "Filter not found";
         }
-    } else {
-        // If filter does not exist, show error message
-        $message = "Filter not found";
     }
 }
 ?>
@@ -46,8 +56,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['FilterCode'])) {
             <p class="error-message"><?php echo $message; ?></p>
         <?php } ?>
         
-        <!-- Only show the form if there's no error -->
-        <?php if ($message !== "Filter not found") { ?>
+        <!-- Show the confirmation form after FilterCode input -->
+        <?php if ($confirmation) { ?>
+            <p>Are you sure you want to delete this filter?</p>
+            <p><strong>Filter Code:</strong> <?php echo htmlspecialchars($FilterCode); ?></p>
+            <form method="post" action="">
+                <input type="hidden" name="FilterCode" value="<?php echo htmlspecialchars($FilterCode); ?>">
+                <input type="hidden" name="confirmDelete" value="yes">
+                <button type="submit" class="btn">Yes</button>
+            </form>
+            <form method="post" action="">
+                <input type="hidden" name="FilterCode" value="<?php echo htmlspecialchars($FilterCode); ?>">
+                <button type="submit" class="btn">No</button>
+            </form>
+        <?php } else { ?>
+            <!-- Form for entering the FilterCode -->
             <form method="post" action="">
                 <input type="text" name="FilterCode" id="FilterCode" placeholder="Filter Code" required>
                 <label for="FilterCode">Filter Code</label>
@@ -56,6 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['FilterCode'])) {
         <?php } ?>
 
         <!-- Return to homepage button -->
+        <form method="get" action="homepage.php">
+            <button type="submit" class="btn">Return to Homepage</button>
+        </form>
+
+        <!-- Return to homepage button if filter is not found -->
         <?php if ($message === "Filter not found") { ?>
             <form method="get" action="homepage.php">
                 <button type="submit" class="btn">Return to Homepage</button>
