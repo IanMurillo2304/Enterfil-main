@@ -1,12 +1,19 @@
 <?php
 session_start();
 include('connect.php');
+include("filters_table.php");
+
+
+if(isset($_GET['error']) && $_GET['error'] == 1) {
+    echo '<script>alert("ERROR: The resulting quantity cannot be less than 0.");</script>';
+} else if(isset($_GET['error']) && $_GET['error'] == 2) {
+    echo '<script>alert("ERROR: The resulting quantity cannot exceed the maximum stock.");</script>';
+} 
 
 // Initialize variables
 $FilterCode = '';
 $currentQuantity = 0;
 $maxStock = 0;
-$errorMessage = ''; // Variable to store error message
 
 if (isset($_GET['FilterCode']) && !empty($_GET['FilterCode'])) {
     $FilterCode = $_GET['FilterCode'];
@@ -22,7 +29,8 @@ if (isset($_GET['FilterCode']) && !empty($_GET['FilterCode'])) {
         $currentQuantity = $row['Quantity'];
         $maxStock = $row['MaxStock'];
     } else {
-        $errorMessage = "Filter not found"; // Set error message if filter is not found
+        echo "Filter Code not found.";
+        exit();
     }
 }
 
@@ -43,11 +51,11 @@ if (isset($_POST['submitQuantityButton'])) {
 
     // Validate the new quantity
     if ($newQuantity < 0) {
-        echo "The resulting quantity cannot be less than 0.";
+        header("Location: changeQuantity.php?error=1");
         exit();
     }
     if ($newQuantity > $maxStock) {
-        echo "The resulting quantity cannot exceed the maximum stock of $maxStock.";
+        header("Location: changeQuantity.php?error=2");
         exit();
     }
 
@@ -73,25 +81,12 @@ if (isset($_POST['submitQuantityButton'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Quantity</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tablestyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-
-<?php if (!empty($errorMessage)) { ?>
-    <!-- Show error message if filter code is not found -->
-    <div class="container" style="display:block;">
-        <h1 class="form-title">Error</h1>
-        <div class="error-message">
-            <p><?php echo $errorMessage; ?></p>
-            <form method="get" action="homepage.php">
-                <button type="submit" class="btn">Return to Homepage</button>
-            </form>
-        </div>
-    </div>
-<?php } else { ?>
-    <div class="container" id="enterFilterCode" style="<?php echo empty($FilterCode) ? 'display:block;' : 'display:none;'; ?>">
+    <div class="ShowTableContainer" id="enterFilterCode" style="<?php echo empty($FilterCode) ? 'display:block;' : 'display:none;'; ?>">
         <h1 class="form-title">Edit Quantity</h1>
-
         <form method="get" action="changeQuantity.php">
             <div class="input-group">
                 <i class="fas fa-clipboard"></i>
@@ -100,13 +95,16 @@ if (isset($_POST['submitQuantityButton'])) {
             </div>
             <input type="submit" class="btn" value="Submit Filter Code" name="submitFilterCode">
         </form>
-
         <form method="post" action="homepage.php">
             <input type="submit" class="btn" value="Back to Dashboard">
         </form>
+        <!--Display Filters Table-->
+        <?php
+            renderFiltersTable($conn);
+        ?>
     </div>
 
-    <div class="container" id="updateQuantity" style="<?php echo !empty($FilterCode) && empty($errorMessage) ? 'display:block;' : 'display:none;'; ?>">
+    <div class="container" id="updateQuantity" style="<?php echo !empty($FilterCode) ? 'display:block;' : 'display:none;'; ?>">
         <h1 class="form-title">Change Quantity</h1>
         <p><strong>Code:</strong> <?php echo htmlspecialchars($FilterCode); ?></p>
         <p><strong>Current Quantity:</strong> <?php echo htmlspecialchars($currentQuantity); ?></p>
@@ -126,7 +124,5 @@ if (isset($_POST['submitQuantityButton'])) {
             <input type="submit" class="btn" value="Submit Quantity Change" name="submitQuantityButton">
         </form>
     </div>
-<?php } ?>
-
 </body>
 </html>

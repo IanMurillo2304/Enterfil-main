@@ -1,7 +1,6 @@
 <?php
 session_start();
 include("connect.php");
-
 ?>  
 
 <!DOCTYPE html>
@@ -19,7 +18,7 @@ include("connect.php");
         <form method="post" action="submitItem.php">
           <div class="input-group">
              <i class="fas fa-lock"></i>
-             <input type="text" name="fCode" id="fCode" placeholder="Filter Code" required>
+             <input type="number" name="fCode" id="fCode" placeholder="Filter Code" required>
              <label for="fCode">Filter Code</label>
           </div>
           <div class="input-group">
@@ -50,7 +49,6 @@ include("connect.php");
         </form>
         <form method="post" action="homepage.php">
             <input type="submit" class="btn" value="Back to Dashboard">
-        </form>
+        </form> 
       </div>
-    </form>
 </body>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("connect.php"); // Include database connection
+include("filters_table.php");
 
 $message = ""; // Initialize the message variable
 $FilterCode = ""; // Initialize FilterCode variable
@@ -10,13 +11,15 @@ $confirmation = false; // To track whether the confirmation step should be shown
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['FilterCode'])) {
         // Sanitize user input
-        $FilterCode = $conn->real_escape_string($_POST['FilterCode']); // Use 'FilterCode' as per your column name
+        $FilterCode = $conn->real_escape_string($_POST['FilterCode']);
 
         // Check if the filter exists in the database
         $check_sql = "SELECT * FROM filters WHERE FilterCode = '$FilterCode'";
         $check_result = $conn->query($check_sql);
 
         if ($check_result->num_rows > 0) {
+            $row = $check_result->fetch_assoc();
+            $FilterName = $row['FilterName']; 
             // If filter exists, proceed to confirmation
             if (isset($_POST['confirmDelete']) && $_POST['confirmDelete'] == 'yes') {
                 // Perform the delete action after confirmation
@@ -32,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } else {
             // If filter does not exist, show error message
-            $message = "Filter not found";
+            echo '<script>alert("FILTER NOT FOUND");</script>';
         }
     }
 }
@@ -45,10 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tablestyle.css">
     <title>Remove Filter</title>
 </head>
 <body>
-    <div class="container" id="removeItem">
+    <div class="ShowTableContainer" id="removeItem">
         <h1 class="form-title">Remove Filter</h1>
         
         <!-- Display success/error message -->
@@ -60,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php if ($confirmation) { ?>
             <p>Are you sure you want to delete this filter?</p>
             <p><strong>Filter Code:</strong> <?php echo htmlspecialchars($FilterCode); ?></p>
+            <p><strong>Filter Name:</strong> <?php echo htmlspecialchars($FilterName); ?></p>
             <form method="post" action="">
                 <input type="hidden" name="FilterCode" value="<?php echo htmlspecialchars($FilterCode); ?>">
                 <input type="hidden" name="confirmDelete" value="yes">
@@ -77,11 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="submit" class="btn" value="Delete Filter">
             </form>
         <?php } ?>
-
-        <!-- Return to homepage button -->
-        <form method="get" action="homepage.php">
-            <button type="submit" class="btn">Return to Homepage</button>
+        <form method="post" action="homepage.php">
+            <input type="submit" class="btn" value="Back to Dashboard">
         </form>
+
+        <!--Display Filters Table-->
+        <?php
+         renderFiltersTable($conn);
+         ?>
 
         <!-- Return to homepage button if filter is not found -->
         <?php if ($message === "Filter not found") { ?>

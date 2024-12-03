@@ -1,17 +1,8 @@
 <?php
-
-include("connect.php");
-include("filters_table.php");
-if(isset($_POST['input'])){
-
-    $input = $_POST['input'];
-
-    
-}
-
-?>
-
-<table>
+function renderFiltersTable($conn) {
+    ?>
+    <div id="filters_table">
+        <table>
             <thead>
                 <tr>
                     <th>Filter Code</th>
@@ -25,11 +16,10 @@ if(isset($_POST['input'])){
             <tbody>
                 <?php
                 // Fetch data from filters table
-                    $sql = "SELECT * FROM filters WHERE FilterName LIKE '{$input}%'";
-                    $result = $conn->query($sql);
+                $sql = "SELECT * FROM filters"; // Updated table name
+                $result = $conn->query($sql);
 
                 if ($result && $result->num_rows > 0) {
-                    // Output data of each row
                     while ($row = $result->fetch_assoc()) {
                         // Determine the stock status
                         $quantityClass = 'quantity-high'; // Default to high
@@ -49,8 +39,12 @@ if(isset($_POST['input'])){
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='7'>No filters found</td></tr>";
+                    echo "<tr><td colspan='6'>No filters found</td></tr>";
                 }
                 ?>
             </tbody>
-</table>
+        </table>
+    </div>
+    <?php
+}
+?>

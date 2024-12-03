@@ -1,8 +1,6 @@
 <?php 
 include 'connect.php';
 
-$message = ""; // Initialize message variable for error handling
-
 if(isset($_POST['searchButton'])){
     $FilterCode = $_POST['fCode'];
 
@@ -12,7 +10,8 @@ if(isset($_POST['searchButton'])){
         $row = $result->fetch_assoc();
     }
     else{
-        $message = "Filter not found"; // Set error message
+        header("Location: searchFilterInterface.php?error=1");
+        exit;
     }
 }
 
@@ -30,27 +29,15 @@ if(isset($_POST['searchButton'])){
 <body>
 
 <?php 
-// Show error message if filter not found
-if (!empty($message)) { 
-?>
-    <div class="container" id="errorInterface" style="display:block;">
-        <h1 class="form-title">Error</h1>
-        <p class="error-message"><?php echo $message; ?></p>
-        <form method="post" action="homepage.php">
-            <button type="submit" class="btn">Return to Homepage</button>
-        </form>
-    </div>
-<?php 
-} else {
-    // Only show the form if filter code exists
-    if(isset($row) && !empty($row)) { 
+// Only show the form if filter code exists
+if(isset($row) && !empty($row)) { 
 ?>
     <div class="container" id="editInterface" style="display:block;">
         <h1 class="form-title">Edit Filter</h1>
         <form method="post" action="updateFilter.php">
           <div class="input-group">
              <i class="fas fa-lock"></i>
-             <input type="text" name="fCode" id="fCode" placeholder="Filter Code" required value="<?php echo isset($row['FilterCode']) ? $row['FilterCode'] : ''; ?>" disabled>
+             <input type="number" name="fCode" id="fCode" placeholder="Filter Code" required value="<?php echo isset($row['FilterCode']) ? $row['FilterCode'] : ''; ?>" disabled>
              <label for="fCode">You have selected filter:</label>
           </div>
           
@@ -60,34 +47,33 @@ if (!empty($message)) {
           <div class="input-group">
               <i class="fas fa-book"></i>
               <input type="text" name="fName" id="fName" placeholder="Filter Name" required value="<?php echo isset($row['FilterName']) ? $row['FilterName'] : ''; ?>">
-              <label for="fName">Update Filter Name</label>
+              <label for="fName">UDPATE: Filter Name</label>
           </div>
           <div class="input-group">
               <textarea id="materials" name="materials" placeholder="Materials" rows="4" cols="49"><?php echo isset($row['Materials']) ? $row['Materials'] : ''; ?></textarea>
-              <label for="materials">Update Materials</label>
+              <label for="materials">UPDATE: Materials</label>
           </div>
           <div class="input-group">
               <i class="fas fa-cog"></i>
               <input type="number" name="quantity" id="quantity" placeholder="Quantity" required value="<?php echo isset($row['Quantity']) ? $row['Quantity'] : ''; ?>">
-              <label for="password">Update Quantity</label>
+              <label for="password">UPDATE: Quantity</label>
           </div>
           <div class="input-group">
               <i class="fas fa-clipboard"></i>
               <input type="number" name="maxStock" id="maxStock" placeholder="Maximum Stock Level" required value="<?php echo isset($row['MaxStock']) ? $row['MaxStock'] : ''; ?>">
-              <label for="password">Update Maximum Stock Level</label>
+              <label for="password">UPDATE: Maximum Stock Level</label>
           </div>
           <div class="input-group">
               <i class="fas fa-clipboard"></i>
               <input type="number" name="lowStock" id="lowStock" placeholder="Low Stock Signal" required value="<?php echo isset($row['LowStockSignal']) ? $row['LowStockSignal'] : ''; ?>">
-              <label for="password">Update Low Stock Signal</label>
+              <label for="password">UPDATE: Low Stock Signal</label>
           </div>
          <input type="submit" class="btn" value="Update Filter" name="updateButton">
         </form>
-    </div>
-<?php 
-    } 
-}
-?>
+      </div>
 
+      <?php 
+} 
+?>
 </body>
 </html>
